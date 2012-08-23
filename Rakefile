@@ -78,4 +78,17 @@ namespace :github do
       end
     end
   end
+  desc 'make a pull request on all the dependencies'
+  task 'pull_request' do
+    repo_hash = YAML.load_file(File.join(File.dirname(__FILE__), repo_file))
+    repos = (repo_hash['repos'] || {})
+    modulepath = (repo_hash['modulepath'] || default_modulepath)
+    repos_to_clone = (repos['repo_paths'] || {})
+    repos_to_clone.each do |remote, local|
+      Dir.chdir(File.join(modulepath, local)) do
+        puts "Pull request of #{local}"
+        puts `git pull`
+      end
+    end
+  end
 end
